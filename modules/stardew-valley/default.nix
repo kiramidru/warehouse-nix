@@ -4,6 +4,9 @@
   perSystem =
     { pkgs, ... }:
     let
+      pname = "stardew-valley";
+      version = "1.6.15";
+
       libs = with pkgs; [
         stdenv.cc.cc.lib
         libGL
@@ -26,12 +29,21 @@
         icu
         openssl
       ];
+
+      desktopItem = pkgs.makeDesktopItem {
+        name = "Stardew Valley";
+        exec = "stardew-valley";
+        icon = "stardew-valley";
+        comment = "An open-ended country-life RPG";
+        desktopName = "Stardew Valley";
+        genericName = "Stardew Valley";
+        categories = [ "Game" ];
+      };
     in
     {
       packages = {
         stardew-valley = pkgs.stdenv.mkDerivation {
-          pname = "stardew-valley";
-          version = "1.6.15";
+          inherit pname version;
 
           src = pkgs.fetchurl {
             url = "https://archive.org/download/stardew-valley-linux-gog-phoenix-games-lab/stardew_valley_1_6_15_24357_8705766150_78675.sh";
@@ -42,9 +54,11 @@
             makeWrapper
             autoPatchelfHook
             unzip
+            copyDesktopItems
           ];
 
           buildInputs = libs;
+          desktopItems = [ desktopItem ];
 
           autoPatchelfIgnoreMissingDeps = [ "liblttng-ust.so.0" ];
 
@@ -56,6 +70,7 @@
           installPhase = ''
             runHook preInstall
             mkdir -p $out/opt/stardew
+
             if [ -d "data/noarch/game" ]; then
               cp -r data/noarch/game/. $out/opt/stardew/
             else
@@ -64,10 +79,16 @@
             fi
 
             chmod -R +x $out/opt/stardew/StardewValley
+            mkdir -p $out/share/icons/hicolor/256x256/apps
+            find $out/opt/stardew -name "StardewValley.png" -exec cp {} $out/share/icons/hicolor/256x256/apps/stardew-valley.png \;
+
+            if [ ! -f $out/share/icons/hicolor/256x256/apps/stardew-valley.png ]; then
+               cp $out/opt/stardew/icon.png $out/share/icons/hicolor/256x256/apps/stardew-valley.png || true
+            fi
+
             mkdir -p $out/libexec
             echo "#!/bin/sh" > $out/libexec/sw_vers
             chmod +x $out/libexec/sw_vers
-
             mkdir -p $out/bin
             makeWrapper $out/opt/stardew/StardewValley $out/bin/stardew-valley \
               --prefix LD_LIBRARY_PATH : "/run/opengl-driver/lib:${lib.makeLibraryPath libs}" \
@@ -76,11 +97,6 @@
 
             runHook postInstall
           '';
-
-          meta = {
-            description = "Stardew Valley 1.6 (GOG version) Native Wrapper";
-            mainProgram = "stardew-valley";
-          };
         };
       };
     };
