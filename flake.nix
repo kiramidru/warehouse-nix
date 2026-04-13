@@ -13,7 +13,6 @@
 
   outputs =
     inputs@{
-      self,
       flake-parts,
       ...
     }:
@@ -24,6 +23,7 @@
 
       imports = [
         ./modules/blender
+        ./modules/stardew-valley
       ];
 
       perSystem =
