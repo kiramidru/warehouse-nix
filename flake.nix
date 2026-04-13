@@ -14,20 +14,21 @@
   outputs =
     inputs@{
       self,
-      nixpkgs,
       flake-parts,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+      ];
+
       imports = [
         ./modules/blender
       ];
 
       perSystem =
         {
-          config,
           pkgs,
-          system,
           ...
         }:
         {
