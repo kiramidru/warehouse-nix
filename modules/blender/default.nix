@@ -189,15 +189,22 @@
       };
     in
     {
-      packages = lib.mapAttrs' (
-        name: info:
-        lib.nameValuePair "blender_${name}" (mkBlender {
-          version = info.version;
-          src = pkgs.fetchurl {
-            url = info.url;
-            sha256 = info.hash;
-          };
-        })
-      ) blenderVersions;
+      packages =
+        let
+          versionedBlenders = lib.mapAttrs' (
+            name: info:
+            lib.nameValuePair "blender_${name}" (mkBlender {
+              version = info.version;
+              src = pkgs.fetchurl {
+                url = info.url;
+                sha256 = info.hash;
+              };
+            })
+          ) blenderVersions;
+        in
+        versionedBlenders
+        // {
+          blender = versionedBlenders.blender_5_1;
+        };
     };
 }
