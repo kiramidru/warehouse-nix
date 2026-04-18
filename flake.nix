@@ -25,8 +25,6 @@
         ./modules/blender
         ./modules/stardew-valley
         ./modules/celeste
-        ./modules/terraria
-        ./modules/super-smash-bros-melee
       ];
 
       perSystem =
