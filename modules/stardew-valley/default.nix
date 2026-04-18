@@ -84,6 +84,8 @@
           '';
 
           dontStrip = true;
+
+          meta.mainProgram = "stardew-valley";
         };
       };
     };
