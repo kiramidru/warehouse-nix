@@ -41,7 +41,7 @@
     in
     {
       packages = {
-        stardew = pkgs.stdenv.mkDerivation {
+        stardew-valley = pkgs.stdenv.mkDerivation {
           inherit pname version;
 
           src = pkgs.fetchurl {
