@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs =
@@ -18,6 +19,7 @@
       ];
 
       imports = [
+        inputs.treefmt-nix.flakeModule
         ./modules/helium-browser
         ./modules/blender
       ];
@@ -28,8 +30,16 @@
           ...
         }:
         {
-          devShells.dev = pkgs.mkShell {
+          treefmt = {
+            projectRootFile = "flake.nix";
+            programs = {
+              nixpkgs-fmt.enable = true;
+            };
+          };
+
+          devShells.default = pkgs.mkShell {
             packages = with pkgs; [
+              config.treefmt.build.wrapper
               nixpkgs-fmt
             ];
           };

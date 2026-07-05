@@ -2,28 +2,18 @@
   perSystem =
     { pkgs, ... }:
     let
-      b = pkgs.callPackage ./package.nix { };
-      mkApp = drv: {
-        type = "app";
-        program = "${drv}/bin/blender";
-      };
-      mkDevShell = drv: pkgs.mkShell { buildInputs = [ drv ]; };
+      blender = pkgs.callPackage ./package.nix { };
     in
     {
-      packages = b.versionedBlenders // {
-        blender = b.blender;
+      packages.blender = blender;
+
+      apps.blender = {
+        type = "app";
+        program = "${blender}/bin/blender";
       };
 
-      apps =
-        pkgs.lib.mapAttrs' (name: drv: pkgs.lib.nameValuePair name (mkApp drv)) b.versionedBlenders
-        // {
-          blender = mkApp b.blender;
-        };
-
-      devShells =
-        pkgs.lib.mapAttrs' (name: drv: pkgs.lib.nameValuePair name (mkDevShell drv)) b.versionedBlenders
-        // {
-          blender = mkDevShell b.blender;
-        };
+      devShells.blender = pkgs.mkShell {
+        buildInputs = [ blender ];
+      };
     };
 }

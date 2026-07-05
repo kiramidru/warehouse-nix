@@ -1,25 +1,66 @@
-{ pkgs, stdenv, ... }:
+{ pkgs, ... }:
 let
   pname = "Helium Browser";
   version = "0.14.3.1";
 
-  srcs = {
-    x86_64-linux = {
-      url = "https://github.com/imputnet/helium-linux/releases/download/${version}/helium-${version}-x86_64_linux.tar.xz";
-      hash = "sha256-mEBKk4+W9Miyu7kr7QQi/WDH4Vkexr1pxNxei2chJ5M=";
-    };
-    aarch64-linux = {
-      url = "https://github.com/imputnet/helium-linux/releases/download/${version}/helium-${version}-arm64_linux.tar.xz";
-      hash = "sha256-j6JIcEvp7ER1owb/7UB613fWALJAIcAF992bLnB+NEg=";
-    };
+  deps = with pkgs; [
+    pango
+    cairo
+    expat
+    fontconfig
+    freetype
+
+    gdk-pixbuf
+    glib
+    gtk3
+
+    mesa
+    libgbm
+    libdrm
+    libGL
+    libvdpau
+    libva
+
+    nspr
+    nss
+    dbus
+    systemd
+
+    alsa-lib
+    pipewire
+    libpulseaudio
+
+    wayland
+    vulkan-loader
+  ];
+
+  desktopItem = pkgs.makeDesktopItem {
+    name = "helium-browser";
+    exec = "helium %U";
+    icon = "helium";
+    desktopName = "Helium Browser";
+    genericName = "Web Browser";
+    categories = [
+      "Network"
+      "WebBrowser"
+    ];
+    terminal = false;
+    mimeTypes = [
+      "text/html"
+      "text/xml"
+      "application/xhtml+xml"
+      "x-scheme-handler/http"
+      "x-scheme-handler/https"
+    ];
   };
 
   helium-browser = pkgs.stdenv.mkDerivation {
     inherit pname version;
 
-    src = pkgs.fetchurl (
-      srcs.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}")
-    );
+    src = pkgs.fetchurl {
+      url = "https://github.com/imputnet/helium-linux/releases/download/${version}/helium-${version}-x86_64_linux.tar.xz";
+      hash = "sha256-mEBKk4+W9Miyu7kr7QQi/WDH4Vkexr1pxNxei2chJ5M=";
+    };
 
     nativeBuildInputs = with pkgs; [
       makeWrapper
@@ -27,38 +68,8 @@ let
       copyDesktopItems
     ];
 
-    buildInputs = with pkgs; [
-      pango
-      cairo
-      expat
-      fontconfig
-      freetype
-
-      gdk-pixbuf
-      glib
-      gtk3
-
-      mesa
-      libgbm
-      libdrm
-      libGL
-      libvdpau
-      libva
-
-      nspr
-      nss
-      dbus
-      systemd
-
-      alsa-lib
-      pipewire
-      libpulseaudio
-
-      wayland
-      vulkan-loader
-    ];
-
-    autoPatchelfIgnoreMissingDeps = pkgs.lib.optionals pkgs.stdenv.isLinux [
+    buildInputs = deps;
+    autoPatchelfIgnoreMissingDeps = [
       "libQt6Core.so.6"
       "libQt6Gui.so.6"
       "libQt6Widgets.so.6"
@@ -101,25 +112,7 @@ let
       runHook postInstall
     '';
 
-    desktopItem = pkgs.makeDesktopItem {
-      name = "helium-browser";
-      exec = "helium %U";
-      icon = "helium";
-      desktopName = "Helium Browser";
-      genericName = "Web Browser";
-      categories = [
-        "Network"
-        "WebBrowser"
-      ];
-      terminal = false;
-      mimeTypes = [
-        "text/html"
-        "text/xml"
-        "application/xhtml+xml"
-        "x-scheme-handler/http"
-        "x-scheme-handler/https"
-      ];
-    };
+    desktopItems = [ desktopItem ];
 
     meta = with pkgs.lib; {
       description = "Private, fast, and honest web browser based on ungoogled-chromium";
@@ -132,6 +125,5 @@ let
       mainProgram = "helium";
     };
   };
-
 in
 helium-browser
