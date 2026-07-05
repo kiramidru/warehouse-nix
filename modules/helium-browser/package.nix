@@ -1,4 +1,4 @@
-{ pkgs, system, ... }:
+{ pkgs, stdenv, ... }:
 let
   pname = "Helium Browser";
   version = "0.14.3.1";
@@ -17,7 +17,9 @@ let
   helium-browser = pkgs.stdenv.mkDerivation {
     inherit pname version;
 
-    src = pkgs.fetchurl (srcs.${system} or (throw "Unsupported system: ${system}"));
+    src = pkgs.fetchurl (
+      srcs.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}")
+    );
 
     nativeBuildInputs = with pkgs; [
       makeWrapper
@@ -101,8 +103,8 @@ let
 
     desktopItem = pkgs.makeDesktopItem {
       name = "helium-browser";
-      exec = "helium-browser %U";
-      icon = "helium-browser";
+      exec = "helium %U";
+      icon = "helium";
       desktopName = "Helium Browser";
       genericName = "Web Browser";
       categories = [
