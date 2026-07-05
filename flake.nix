@@ -19,6 +19,7 @@
 
       imports = [
         ./modules/helium-browser
+        ./modules/blender
       ];
 
       perSystem =

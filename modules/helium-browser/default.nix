@@ -2,23 +2,18 @@
   perSystem =
     { pkgs, ... }:
     let
-      helium = pkgs.callPackage ./package.nix { };
+      helium-browser = pkgs.callPackage ./package.nix { };
     in
     {
-      packages.default = helium;
-      packages.helium = helium;
+      packages.helium-browser = helium-browser;
 
-      apps.default = {
+      apps.helium-browser = {
         type = "app";
-        program = "${helium}/bin/helium";
-      };
-      apps.helium = {
-        type = "app";
-        program = "${helium}/bin/helium";
+        program = "${helium-browser}/bin/helium";
       };
 
-      devShells.default = pkgs.mkShell {
-        buildInputs = [ helium ];
+      devShells.helium-browser = pkgs.mkShell {
+        buildInputs = [ helium-browser ];
       };
     };
 }
