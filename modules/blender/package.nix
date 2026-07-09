@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
 
-  pname = "blender";
+  pname = "Blender";
   version = "5.1.2";
 
   deps = with pkgs; [
