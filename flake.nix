@@ -7,21 +7,19 @@
   };
 
   outputs =
-    inputs@{
-      flake-parts,
-      ...
-    }:
+    inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
 
-      imports = [
-        ./modules/helium-browser
-        ./modules/blender
-        ./modules/proton-mail
-        ./modules/gb-studio
-      ];
+      perSystem = { pkgs, ... }: {
+        packages = {
+          helium-browser = pkgs.callPackage ./modules/helium-browser { };
+          blender = pkgs.callPackage ./modules/blender { };
+          gb-studio = pkgs.callPackage ./modules/gb-studio { };
+        };
+      };
     };
 }
