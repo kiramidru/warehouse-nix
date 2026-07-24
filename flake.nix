@@ -18,7 +18,7 @@
         packages = {
           helium-browser = pkgs.callPackage ./modules/helium-browser { };
           blender = pkgs.callPackage ./modules/blender { };
-          gb-studio = pkgs.callPackage ./modules/gb-studio { };
+          agy = pkgs.callPackage ./modules/agy { };
         };
       };
     };

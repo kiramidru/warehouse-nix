@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   pname = "Helium Browser";
   version = "0.14.3.1";
@@ -105,7 +105,7 @@ let
         --add-flags "--disable-background-networking"
 
       # Install icon
-      mkdir -p $out/share/icons/hicolor/256x256/apps
+      mkdir -p $out/share/iconkos/hicolor/256x256/apps
       cp $out/opt/helium/product_logo_256.png $out/share/icons/hicolor/256x256/apps/helium.png
 
       runHook postInstall
@@ -113,10 +113,10 @@ let
 
     desktopItems = [ desktopItem ];
 
-    meta = with pkgs.lib; {
+    meta = {
       description = "Private, fast, and honest web browser based on ungoogled-chromium";
       homepage = "https://helium.computer/";
-      license = licenses.gpl3Only;
+      license = lib.licenses.gpl3Only;
       platforms = [
         "x86_64-linux"
         "aarch64-linux"
