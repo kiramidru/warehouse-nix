@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 let
   pname = "Antigravity CLI";
-  version = "4.3.2";
+  version = "1.1.6";
 
   agy = pkgs.stdenv.mkDerivation {
     inherit pname version;
@@ -27,7 +27,7 @@ let
     meta = {
       description = "Google Antigravity agentic coding CLI (`agy`) — repackaged prebuilt binary";
       homepage = "https://antigravity.google/";
-      license = lib.licenses.unfree;
+      license = lib.licenses.gpl3Plus;
       mainProgram = "agy";
     };
   };
