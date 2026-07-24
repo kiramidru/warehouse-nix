@@ -104,10 +104,6 @@ let
         --add-flags "--check-for-update-interval=0" \
         --add-flags "--disable-background-networking"
 
-      # Install icon
-      mkdir -p $out/share/iconkos/hicolor/256x256/apps
-      cp $out/opt/helium/product_logo_256.png $out/share/icons/hicolor/256x256/apps/helium.png
-
       runHook postInstall
     '';
 
